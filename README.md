@@ -2,7 +2,7 @@
 
 CompassFusion is a standalone GNSS/INS processing toolkit built from the `spp_standalone` engineering workspace. This repository contains the core Python code, configuration files, tests, documentation, and one real GREAT/MSF sample dataset for demonstration.
 
-## ????
+## Repository Contents
 
 - `src/`: core source code and command-line entry points.
 - `src/run_compass_fusion.py`: unified XML front-end for INS mechanization, loose coupling, and tight-coupling experiments.
@@ -14,7 +14,7 @@ CompassFusion is a standalone GNSS/INS processing toolkit built from the `spp_st
 - `data_examples/`: bundled real navigation sample data and product files.
 - `docs/`: engineering README and release notes.
 
-## ????
+## Bundled Sample Data
 
 The bundled sample dataset is located at:
 
@@ -35,12 +35,12 @@ It includes:
 
 See `data_examples/DATASETS.md` for the detailed data description.
 
-## ??????
+## Recommended Python Environment
 
 The current verified Python environment is:
 
 ```powershell
-D:nnaconda\envs\BraVL\python.exe
+D:\annaconda\envs\BraVL\python.exe
 ```
 
 ## Quick Start
@@ -49,20 +49,20 @@ Run the included CompassFusion example from the repository root:
 
 ```powershell
 $env:PYTHONPATH = "$PWD\src"
-& 'D:nnaconda\envs\BraVL\python.exe' srcun_compass_fusion.py --config configs\compass_fusion_great_msf_example.xml
+& 'D:\annaconda\envs\BraVL\python.exe' src\run_compass_fusion.py --config configs\compass_fusion_great_msf_example.xml
 ```
 
 Run the PPP example with bundled precise products:
 
 ```powershell
-scriptsun_ppp_great_msf_example.ps1
+scripts\run_ppp_great_msf_example.ps1
 ```
 
 Run tests:
 
 ```powershell
 $env:PYTHONPATH = "$PWD\src"
-& 'D:nnaconda\envs\BraVL\python.exe' -m pytest tests
+& 'D:\annaconda\envs\BraVL\python.exe' -m pytest tests
 ```
 
 ## Current Scope
