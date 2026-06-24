@@ -1,0 +1,26 @@
+﻿[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compassfusion-core"
+version = "0.1.0"
+description = "CompassFusion core GNSS/INS processing toolkit"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.20"]
+
+[project.scripts]
+compass-fusion = "run_compass_fusion:main"
+compass-spp = "run_spp:main"
+compass-ppp = "run_ppp:main"
+compass-ppk = "run_ppk:main"
+compass-ins = "run_ins:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["run_compass_fusion", "run_spp", "run_ppp", "run_ppk", "run_ins", "run_spp_compare"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["compass*"]

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?> 
+<!DOCTYPE config>
+
+<config>
+<gen>
+   <beg> "2021-10-13 08:24:00" </beg>
+   <end> "2021-10-13 09:20:00" </end>
+   <sys > GPS GAL BDS </sys>
+   <rec> SEPT</rec> 
+   <rover> SEPT </rover>
+   <int>  1   </int> 
+ </gen>
+
+ <inputs>
+   <rinexo>  
+   .\GNSS\SEPT2860.21o
+   </rinexo>
+   <rinexn> ./GNSS/brdm2860.21p</rinexn>
+   <atx> ./model/igs_absolute_14.atx </atx>
+   <blq> ./model/oceanload </blq>
+   <rinexc> ./GNSS/COD0MGXFIN_20212860000_01D_30S_CLK.CLK </rinexc>
+   <sp3>    ./GNSS/COD0MGXFIN_20212860000_01D_05M_ORB.SP3   </sp3>
+   <sinex> ./model/igs19P2059.snx </sinex>
+   <DE> ./model/jpleph_de405_great </DE>
+   <EOP> ./model/poleut1_great </EOP>
+   <imu> .\IMU\smallimu_out_2.txt    </imu>
+ </inputs>
+
+ <outputs append="false" verb="1">
+   <log> result/LOGRT.log </log>
+   <ppp> result/FLT/$(rec)-GREC-ADIS-TCPPP-Vb.log </ppp>
+   <flt> result/FLT/$(rec)-GREC-ADIS-TCPPP-Vb.flt </flt>
+   <ins> result/$(rec)-GREC-ADIS-TCPPP.ins </ins>
+   <kml> result/KML/$(rec)-GREC-ADIS-TCPPP-Vb.kml </kml>
+ </outputs>
+ 
+ 
+ <process>
+  <phase>				   true  		   </phase>
+  <tropo>				   true 		   </tropo> 
+  <iono>				   false 		   </iono> 
+  <doppler> 			   false  	   	   </doppler> 
+  <tropo_model>            saastamoinen  </tropo_model> 
+  <sig_init_crd>           30            </sig_init_crd>
+  <sig_init_vel>           10             </sig_init_vel>
+  <sig_init_ztd>           10             </sig_init_ztd>
+  <sig_init_amb>           30            </sig_init_amb>
+  <sig_init_gal>           30            </sig_init_gal>
+  <sig_init_glo>           30            </sig_init_glo>
+  <sig_init_bds>           30            </sig_init_bds>
+  <sig_init_vion>          100           </sig_init_vion>
+  <minimum_elev>           7             </minimum_elev> 
+  <obs_combination> 	   IONO_FREE     </obs_combination> 
+  <max_res_norm> 		   4  		   </max_res_norm>
+  <pos_kin>				   true    	   </pos_kin> 
+  <sd_sat> 				   false 		   </sd_sat>
+  <min_sat> 				 3 	 	   </min_sat>
+  <obs_weight>  		   SINEL 		   </obs_weight> 
+  <!-- <basepos>  		       CFILE 		   </basepos>  -->
+  <bds_code_bias_corr> 	   true        </bds_code_bias_corr>
+  <realtime>  		       false 		   </realtime> 
+  <slip_model>  		   default 	   </slip_model> 
+  <frequency>              2  			 </frequency>
+</process>
+
+<filter
+  method_flt="kalman"
+  noise_crd="30"
+  noise_vel="1"
+  noise_vion="80"
+  noise_dclk="100"
+  rndwk_vion="1000"
+  rndwk_ztd="6"
+  rndwk_amb="0"
+/>
+
+ <ins>
+	<ProcTime Start="0" End="200000000"/>
+	
+	<DataFormat>
+		<AxisOrder Type="garfu"  Format="garfu/gaflu/gafrd/starneto/unicore" />
+		<GyroUnit Type="DPS" Format="DPS/RPS/RAD/DPH/RPH" />
+		<AcceUnit Type="MPS2" Format="MPS/MPS2" />
+		<Frequency Value ="100" Description="Hz" />
+	</DataFormat>
+	
+	<Alignment Type="POS"  Format="OFF/STATIC/POS/VEL">
+		<PositionVector Value="3" Description="m" />
+		<VelocityVector Value="3" Description="m/s" />
+		<CoarseAlignTime Value="300" Description="s" />
+	</Alignment>
+	
+	<InitialStates>
+		<Position Type="OFF" Format="OFF/Cartesian/Geodetic"  X="0"  Y="0"  Z="0" Description="m"  />
+		<Velocity Type="OFF" Format="OFF/Cartesian"  X="0" Y="0"  Z="0"  Description="m/s" />
+		<Attitude Type="OFF" Format="OFF/ON" Pitch="0" Roll="0" Yaw="0" Description="deg" />
+		<GyroBias Type="OFF" Format="OFF/ON/Mean" X="401" Y="32"  Z="-85" Description="deg/h" />
+		<AcceBias Type="OFF" Format="OFF/ON/Mean" X="0" Y="0"  Z="0" Description="mg" />
+		<GyroScale Type="OFF" Format="OFF/Const" X="1" Y="1" Z="1" Description="#"/>
+		<AcceScale Type="OFF" Format="OFF/Const" X="1" Y="1" Z="1" Description="#"/>
+	</InitialStates> 
+
+ </ins>
+ 
+ 
+<integration>
+	<GNSS Type="TCI" Format="OFF/LCI/TCI">
+		<AntennaLever Type="RFU" Format="RFU/FLU/FRD" X="0.01" Y="-0.273" Z="0.09" Description="m" /> 
+		<SolSource Type="SyncSol" Format="SyncSol/SolFile-GREAT/SolFile-RTKLIB" />
+		<Frequency Value ="1" Description="Hz" />
+		<DelayTime Value="0.001" Description="s"/>
+		<LCISetting MinSat="5" MaxPDOP="3" />
+	</GNSS>
+	
+	<Estimator Type="Forward" Format="Forward/Backward/FBS/RTS" >
+		<IMUErrorModel Type="ADIS 16470"   Format="Customize/SPAN FSAS/SPAN CPT/ADIS 16470/StarNeto"   />
+		<Attitude InitialSTD="1,1,20" ProcNoiseSD="0.5,0.5,0.5" Description="deg" />
+		<Velocity InitialSTD="1,1,1" ProcNoiseSD="0.2,0.2,0.2" Description="m/s" />
+		<Position InitialSTD="3,3,3" ProcNoiseSD="0,0,0" Description="m" />
+		<GyroBias InitialSTD="1,1,1" ProcNoiseSD="0,0,0" Description="deg/h" />
+		<AcceBias InitialSTD="1,1,1" ProcNoiseSD="0,0,0" Description="mg" />
+	</Estimator>
+	
+
+</integration>
+
+
+ <ambiguity>
+   <!--upd> NONE </upd-->      
+   <fix_mode> NO </fix_mode>      
+   <part_fix>  YES  </part_fix>   
+   <part_fix_num> 4 </part_fix_num>   
+   <ratio>  2.0  </ratio>           
+   <add_leo>  NO   </add_leo>
+   <set_refsat> YES </set_refsat>
+   <all_baselines>  NO  </all_baselines>
+   <min_common_time>  0  </min_common_time>               
+   <baseline_length_limit>  3500  </baseline_length_limit>
+   <widelane_interval> 30 </widelane_interval>            
+   <widelane_decision     maxdev = "0.275" maxsig = "0.10" alpha = "1000" />
+   <narrowlane_decision   maxdev = "0.375" maxsig = "0.10" alpha = "1000" />
+ </ambiguity>
+
+
+ <bds sigma_C="1" sigma_L="0.02" >
+ <freq>  1  2 </freq>
+ <band>  2  7 </band>
+ </bds>
+
+ <gps sigma_C="1" sigma_L="0.02" >
+  <freq>  1  2 </freq>
+  <band> 1  2  </band>
+ </gps>
+ 
+ <gal sigma_C="1" sigma_L="0.02" >
+  <freq>  1  2 </freq>
+  <band> 1  5  </band>
+ </gal>
+
+ <glo sigma_C="4" sigma_L="0.04" >
+  <freq>  1  2 </freq>
+    <band> 1  2  </band>
+ </glo>
+ 
+ <qzs sigma_C="0.6" sigma_L="0.01" >
+  <freq>  1  2 </freq>
+    <band> 1  2  </band>
+ </qzs>
+ 
+ 
+ 
+</config>
+ 

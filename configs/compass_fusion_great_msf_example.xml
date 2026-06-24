@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <gen>
+    <mode>loose</mode>
+    <start_sow>289371</start_sow>
+    <end_sow>293100</end_sow>
+    <fixed_only>false</fixed_only>
+  </gen>
+
+  <inputs>
+    <rinexo>
+      data_examples/great_msf_20211013/GNSS/R2932860.21o
+      data_examples/great_msf_20211013/GNSS/SEPT2860.21O
+    </rinexo>
+    <rinexn>data_examples/great_msf_20211013/GNSS/brdm2860.21p</rinexn>
+    <sp3>data_examples/great_msf_20211013/products/sp3/COD0MGXFIN_20212860000_01D_05M_ORB.SP3</sp3>
+    <clk>data_examples/great_msf_20211013/products/clk/COD0MGXFIN_20212860000_01D_30S_CLK.CLK</clk>
+    <bias>data_examples/great_msf_20211013/products/bia/COD0MGXFIN_20212860000_01D_01D_OSB.BIA</bias>
+    <atx>data_examples/great_msf_20211013/model/igs_absolute_14.atx</atx>
+    <blq>data_examples/great_msf_20211013/model/oceanload</blq>
+    <EOP>data_examples/great_msf_20211013/model/poleut1_great</EOP>
+    <imu>data_examples/great_msf_20211013/IMU/smallimu_out_2.txt</imu>
+    <gnss format="ie">data_examples/great_msf_20211013/groundtruth/groundtruth_211013_GNSS.txt</gnss>
+    <!--
+      Prototype tight coupling input. Enable mode=tight only after providing
+      a CSV with columns:
+      sow,sat_x_m,sat_y_m,sat_z_m,pseudorange_m,variance_m2
+      Optional columns:
+      sat_vx_mps,sat_vy_mps,sat_vz_mps,range_rate_mps,range_rate_variance_m2
+      <ranges format="csv">data/great_msf/tight_ranges.csv</ranges>
+    -->
+    <attitude format="ie" mode="init">data_examples/great_msf_20211013/groundtruth/groundtruth_211013_ADIS.txt</attitude>
+    <truth format="ie">data_examples/great_msf_20211013/groundtruth/groundtruth_211013_ADIS.txt</truth>
+  </inputs>
+
+  <outputs>
+    <ins>outputs/compass_fusion_great_msf_loose.csv</ins>
+    <rate_hz>1</rate_hz>
+    <options Separator="," PositionPrecision="4" VelocityPrecision="5"
+             Velocity="true" Covariance="true" Residual="true" Bias="true"/>
+  </outputs>
+
+  <process>
+    <sys>GPS GAL BDS</sys>
+    <sat_rm>C01 C02 C03 C04 C05</sat_rm>
+    <phase>true</phase>
+    <doppler>false</doppler>
+    <iono>false</iono>
+    <tropo>false</tropo>
+    <minimum_elev>7</minimum_elev>
+    <obs_combination>RAW_MIX</obs_combination>
+    <obs_weight>SINEL</obs_weight>
+    <max_res_norm>4</max_res_norm>
+    <pos_kin>true</pos_kin>
+    <basepos>CFILE</basepos>
+    <slip_model>default</slip_model>
+    <frequency>2</frequency>
+    <min_sat>4</min_sat>
+  </process>
+
+  <filter method_flt="kalman"
+          gyro_noise_rad_s="5e-4"
+          accel_noise_mps2="2e-2"
+          gyro_bias_rw_rad_s2="1e-6"
+          accel_bias_rw_mps3="1e-4"
+          min_position_sigma_m="0.05"
+          min_velocity_sigma_mps="0.08"/>
+
+  <ambiguity>
+    <fix_mode>SEARCH</fix_mode>
+    <part_fix>YES</part_fix>
+    <part_fix_num>4</part_fix_num>
+    <ratio>1.5</ratio>
+    <min_common_time>0</min_common_time>
+    <baseline_length_limit>3500</baseline_length_limit>
+    <widelane_interval>30</widelane_interval>
+  </ambiguity>
+
+  <ins>
+    <ProcTime Start="0" End="200000000"/>
+
+    <DataFormat>
+      <AxisOrder Type="garfu"/>
+      <GyroUnit Type="DPS"/>
+      <AcceUnit Type="MPS2"/>
+      <Frequency Value="100"/>
+    </DataFormat>
+
+    <Alignment Type="POS">
+      <PositionVector Value="3" Description="m"/>
+      <VelocityVector Value="3" Description="m/s"/>
+      <CoarseAlignTime Value="300" Description="s"/>
+    </Alignment>
+
+    <InitialStates>
+      <Position Type="OFF" Format="OFF/Cartesian/Geodetic" X="0" Y="0" Z="0" Description="m"/>
+      <Velocity Type="OFF" Format="OFF/Cartesian" X="0" Y="0" Z="0" Description="m/s"/>
+      <Attitude Type="OFF" Format="OFF/ON" Pitch="0" Roll="0" Yaw="0" Description="deg"/>
+      <GyroBias Type="OFF" Format="OFF/ON/Mean" X="0" Y="0" Z="0" Description="deg/h"/>
+      <AcceBias Type="OFF" Format="OFF/ON/Mean" X="0" Y="0" Z="0" Description="mg"/>
+      <GyroScale Type="OFF" Format="OFF/Const" X="1" Y="1" Z="1" Description="#"/>
+      <AcceScale Type="OFF" Format="OFF/Const" X="1" Y="1" Z="1" Description="#"/>
+    </InitialStates>
+  </ins>
+
+  <integration>
+    <GNSS Type="LCI">
+      <AntennaLever Type="RFU" X="0.01" Y="-0.273" Z="0.09" Description="m"/>
+      <SolSource Type="SyncSol"/>
+      <Frequency Value="1"/>
+      <LCISetting MinSat="5" MaxPDOP="6" MaxNorm="20"/>
+      <VelocityAttitudeAiding Enabled="false" MinSpeed="8.0" Gain="1.0"/>
+    </GNSS>
+
+    <Estimator Type="Forward" GateSigma="1000" EstimateAttitudeBias="false">
+      <Attitude InitialSTD="0.5" Description="deg"/>
+      <Velocity InitialSTD="1" Description="m/s"/>
+      <Position InitialSTD="3" Description="m"/>
+      <GyroBias InitialSTD="1" Description="deg/h"/>
+      <AcceBias InitialSTD="1" Description="mg"/>
+    </Estimator>
+  </integration>
+</config>
+
+
+

@@ -1,0 +1,19 @@
+﻿# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environments
+.venv/
+venv/
+*.egg-info/
+
+# Runtime outputs
+outputs/*
+!outputs/.gitkeep
+
+# Temporary/profiling files
+*.profile
+*.tmp
+.DS_Store
+Thumbs.db
