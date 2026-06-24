@@ -1,4 +1,4 @@
-﻿# Preserve bundled navigation datasets/products exactly as copied.
+# Preserve bundled navigation datasets/products exactly as copied.
 data_examples/** -text
 
 # Keep source and documentation with LF in the repository.
